@@ -1,17 +1,23 @@
 name: build
 
 on:
-  push:
+  - workflow_dispatch
+  - push
 
 jobs:
   build:
-    runs-on: ${{ matrix.builder }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        builder: [macos-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: build
         run: make
+      - name: upload
+        uses: actions/upload-artifact@v3
+        with:
+          path: wrk
+          name: wrk-${{ matrix.os }}-amd64
